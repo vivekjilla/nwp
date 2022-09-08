@@ -1,5 +1,5 @@
 async function fetchAPI(postId = '') {
-  const url = "https://public-api.wordpress.com/rest/v1.1/sites/adityadotdev.wordpress.com/posts"
+  const url = process.env.WORDPRESS_API_URL
   if (postId){
     url+"/"+postId
   }

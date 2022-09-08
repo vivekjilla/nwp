@@ -14,6 +14,7 @@ module.exports = {
       '1.gravatar.com',
       '2.gravatar.com',
       'secure.gravatar.com',
+      'vivekjilla.files.wordpress.com'
     ],
   },
 }
