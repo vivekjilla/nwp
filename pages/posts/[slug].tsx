@@ -72,13 +72,12 @@ export const getStaticProps: GetStaticProps = async ({
 }) => {
   const data = await getAllPosts()
   var post = data && data.filter(p => p.slug == params?.slug);
-  const comments = await getAllComments(post.slug)
   return {
     props: {
       preview: false,
       post: post && post[0],
       posts: data,
-      comments: comments,
+      comments: [],
     },
     revalidate: 10,
   }
