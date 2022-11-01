@@ -5,8 +5,9 @@ import useSWR from 'swr'
 export default function useComments() {
   const [text, setText] = useState('')
   const [name, setName] = useState('')
+  const [comments, setComments] = useState([])
   const [blog_id, setBlogId] = useState<string | null>(null)
-
+  /*
   const { data: comments, mutate } = useSWR<Comment[]>(
     blog_id,
     async (blog_id: string) => {
@@ -17,9 +18,9 @@ export default function useComments() {
       const res = await fetch(queryUrl)
       return res.status == 200 ? res.json() : []
     },
-    { fallbackData: [] }
+    { fallbackData: init_comments }
   )
-
+*/
   useEffect(() => {
     const pathParts = window.location.pathname.split("/");
     const blog_id = pathParts[pathParts.length - 1]
@@ -32,7 +33,7 @@ export default function useComments() {
     e.preventDefault()
     const user_name = name
     try {
-      await fetch('/api/comment', {
+      const res = await fetch('/api/comment', {
         method: 'POST',
         body: JSON.stringify({ blog_id, text, user_name }),
         headers: {
@@ -41,11 +42,17 @@ export default function useComments() {
       })
       setText('')
       setName('')
-      await mutate()
+      //await mutate()
+      //console.log(res)
+      if(res.status == 200){
+        const new_comment = await res.json()
+        console.log("new_comment : "+ new_comment)
+        setComments([new_comment, ...comments])
+      }
     } catch (err) {
       console.log(err)
     }
   }
 
-  return { text, setText, name, setName, comments, onSubmit }
+  return { text, setText, name, setName, comments, setComments, onSubmit }
 }

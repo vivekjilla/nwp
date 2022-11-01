@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const data = await getAllPosts()
   var post = data && data.filter(p => p.slug == params?.slug);
-  const comments = await getAllComments(post.slug)
+  const comments = await getAllComments(post && post[0].slug)
   return {
     props: {
       preview: false,

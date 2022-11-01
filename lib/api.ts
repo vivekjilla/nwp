@@ -34,5 +34,5 @@ export async function getAllComments(blog_id: string) {
   };
 
   const { resources } = await container.items.query(queryspec).fetchAll();
-  return resources;
+  return resources.reverse();
 }
