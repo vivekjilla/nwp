@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
 import Head from 'next/head'
-import { GetStaticPaths, GetStaticProps } from 'next'
+import { GetStaticPaths, GetServerSideProps } from 'next'
 import Container from '../../components/container'
 import Comment from '../../components/comment'
 import PostBody from '../../components/post-body'
@@ -65,29 +65,20 @@ export default function Post({ post, posts, preview, comments }) {
   )
 }
 
-export const getStaticProps: GetStaticProps = async ({
+export const getServerSideProps: GetServerSideProps = async ({
   params,
   preview = false,
   previewData,
 }) => {
   const data = await getAllPosts()
   var post = data && data.filter(p => p.slug == params?.slug);
+  const comments = await getAllComments(post.slug)
   return {
     props: {
       preview: false,
       post: post && post[0],
       posts: data,
-      comments: [],
-    },
-    revalidate: 10,
-  }
-}
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  const allPosts = await getAllPosts()
-
-  return {
-    paths: allPosts.map( node  => `/posts/${node.slug}`) || [],
-    fallback: true,
+      comments: comments,
+    }
   }
 }
