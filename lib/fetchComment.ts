@@ -25,17 +25,13 @@ export default async function fetchComment(
         
     const { resources } = await container.items.query(queryspec).fetchAll();
 
-    for(const comment of resources)
-    {
-      return comment;
-    }
     // string data to object
-    // const comments = rawComments.map((c) => {
-    //   const comment: Comment = JSON.parse(c)
-    //   return comment
-    // })
+    const comments = resources.map((c) => {
+      const comment: Comment = JSON.parse(c)
+      return comment
+    })
 
-    return res.status(200)
+    return res.status(200).json(comments)
   } catch (_) {
     return res.status(400).json({ message: 'Unexpected error occurred.' })
   }
