@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { Comment } from '../interfaces'
-import { container } from './cosmos'
+import { getAllComments } from './api'
 
 export default async function fetchComment(
   req: NextApiRequest,
@@ -12,25 +11,8 @@ export default async function fetchComment(
     return res.status(400).json({ message: 'Missing parameter.' })
   }
 
-
   try {
-    // get data
-      const queryspec = {
-        query: "SELECT * from c where c.blog_id == @blog_id",
-        parameters: [{
-          name: "@blog_id",
-          value: blog_id
-        }]
-      };
-        
-    const { resources } = await container.items.query(queryspec).fetchAll();
-
-    // string data to object
-    const comments = resources.map((c) => {
-      const comment: Comment = JSON.parse(c)
-      return comment
-    })
-
+    const comments = await getAllComments(blog_id);
     return res.status(200).json(comments)
   } catch (_) {
     return res.status(400).json({ message: 'Unexpected error occurred.' })

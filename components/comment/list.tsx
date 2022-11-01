@@ -13,15 +13,6 @@ export default function CommentList({ comments }: CommentListProps) {
         comments.map((comment) => {
           return (
             <div key={comment.created_at} className="flex space-x-4">
-              <div className="flex-shrink-0">
-                <img
-                  alt={comment.user_name}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
-              </div>
-
               <div className="flex-grow">
                 <div className="flex space-x-2">
                   <b>{comment.user_name}</b>

@@ -4,15 +4,18 @@ import useSWR from 'swr'
 
 export default function useComments() {
   const [text, setText] = useState('')
+  const [name, setName] = useState('')
   const [blog_id, setBlogId] = useState<string | null>(null)
 
   const { data: comments, mutate } = useSWR<Comment[]>(
-    '/api/comment',
-    (url: string) => {
+    blog_id,
+    async (blog_id: string) => {
+      console.log("bid in swr: " + blog_id)
       const query = new URLSearchParams({ blog_id })
-      const queryUrl = `${url}?${query.toString()}`
+      const queryUrl = `/api/comment?${query.toString()}`
 
-      return fetch(queryUrl).then((res) => res.json())
+      const res = await fetch(queryUrl)
+      return res.status == 200 ? res.json() : []
     },
     { fallbackData: [] }
   )
@@ -20,13 +23,14 @@ export default function useComments() {
   useEffect(() => {
     const pathParts = window.location.pathname.split("/");
     const blog_id = pathParts[pathParts.length - 1]
-    console.log(blog_id)
-    setBlogId(blog_id)
-  }, [])
+    if (blog_id) {
+      setBlogId(blog_id)
+    }
+  })
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const user_name = "hello"
+    const user_name = name
     try {
       await fetch('/api/comment', {
         method: 'POST',
@@ -36,11 +40,12 @@ export default function useComments() {
         },
       })
       setText('')
+      setName('')
       await mutate()
     } catch (err) {
       console.log(err)
     }
   }
 
-  return { text, setText, comments, onSubmit }
+  return { text, setText, name, setName, comments, onSubmit }
 }

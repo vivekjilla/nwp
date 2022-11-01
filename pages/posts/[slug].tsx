@@ -12,10 +12,10 @@ import SectionSeparator from '../../components/section-separator'
 import Layout from '../../components/layout'
 import PostTitle from '../../components/post-title'
 import Tags from '../../components/tags'
-import { getAllPosts } from '../../lib/api'
+import { getAllPosts, getAllComments } from '../../lib/api'
 import { CMS_NAME } from '../../lib/constants'
 
-export default function Post({ post, posts, preview }) {
+export default function Post({ post, posts, preview, comments }) {
   const router = useRouter()
   const morePosts = posts && posts.filter((p) => p.ID != post.ID)
 
@@ -55,7 +55,7 @@ export default function Post({ post, posts, preview }) {
             </article>
 
             <SectionSeparator />
-            <Comment />
+            <Comment init_comments={comments}/>
             <SectionSeparator />
             {morePosts && morePosts.length > 0 && <MoreStories posts={morePosts} />}
           </>
@@ -72,12 +72,13 @@ export const getStaticProps: GetStaticProps = async ({
 }) => {
   const data = await getAllPosts()
   var post = data && data.filter(p => p.slug == params?.slug);
-
+  const comments = await getAllComments(post.slug)
   return {
     props: {
       preview: false,
       post: post && post[0],
       posts: data,
+      comments: comments,
     },
     revalidate: 10,
   }
