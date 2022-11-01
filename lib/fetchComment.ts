@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Comment } from '../interfaces'
+import { container } from './cosmos'
 
 export default async function fetchComment(
   req: NextApiRequest,
@@ -14,10 +15,18 @@ export default async function fetchComment(
 
   try {
     // get data
-    const rawComments = []//await redis.lrange(url, 0, -1)
+      const queryspec = {
+        query: "SELECT * from c where c.blog_id == @blog_id",
+        parameters: [{
+          name: "@blog_id",
+          value: blog_id
+        }]
+      };
+        
+    const { resources } = await container.items.query(queryspec).fetchAll();
 
     // string data to object
-    const comments = rawComments.map((c) => {
+    const comments = resources.map((c) => {
       const comment: Comment = JSON.parse(c)
       return comment
     })
