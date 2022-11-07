@@ -9,8 +9,11 @@ import { getAllPosts } from '../lib/api'
 import { CMS_NAME } from '../lib/constants'
 
 export default function Index({ allPosts, preview }) {
-  const heroPost = allPosts[0]
-  const morePosts = allPosts.slice(1)
+  let heroPost = allPosts.filter(p => decodeURIComponent(p.slug) == "the-great-indian-travelogue")[0]
+  if(!heroPost){
+    heroPost = allPosts[0]
+  }
+  const morePosts = allPosts.filter(p => decodeURIComponent(p.slug) != heroPost.slug)
 
   return (
     <Layout preview={preview}>

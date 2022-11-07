@@ -55,7 +55,7 @@ export default function Post({ post, posts, preview, comments }) {
             </article>
 
             <SectionSeparator />
-            <Comment init_comments={comments}/>
+            <Comment init_comments={comments} />
             <SectionSeparator />
             {morePosts && morePosts.length > 0 && <MoreStories posts={morePosts} />}
           </>
@@ -71,8 +71,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   previewData,
 }) => {
   const data = await getAllPosts()
-  var post = data && data.filter(p => p.slug == params?.slug);
-  const comments = await getAllComments(post && post[0].slug)
+  var post = data && data.filter(p => decodeURIComponent(p.slug) == params?.slug);
+  var comments = []
+  if (post && post.length > 0) {
+    comments = await getAllComments(post[0].slug)
+  }
   return {
     props: {
       preview: false,
