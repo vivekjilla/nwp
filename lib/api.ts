@@ -25,14 +25,19 @@ export async function getAllPosts() {
 }
 
 export async function getAllComments(blog_id: string) {
-  const queryspec = {
-    query: "SELECT * from c where c.blog_id = @blog_id",
-    parameters: [{
-      name: "@blog_id",
-      value: blog_id
-    }]
-  };
+  try {
+    const queryspec = {
+      query: "SELECT * from c where c.blog_id = @blog_id",
+      parameters: [{
+        name: "@blog_id",
+        value: blog_id
+      }]
+    };
 
-  const { resources } = await container.items.query(queryspec).fetchAll();
-  return resources.reverse();
+    const { resources } = await container.items.query(queryspec).fetchAll();
+    return resources.reverse();
+  } catch (ex) {
+    console.log(ex)
+    return []
+  }
 }
